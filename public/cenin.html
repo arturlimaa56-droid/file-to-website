@@ -149,8 +149,9 @@ window.addEventListener('hashchange',function(){var h=location.hash.slice(1);if(
 function busy(d,h){return S.ocupados.indexOf(d+' '+h)>-1||(S.agendamentos||[]).some(function(x){return x.status==='scheduled'&&x.data===d&&x.horario===h})}
 function closedDay(d){return S.diasFechados.find(function(x){return x.data===d})}
 function formatBookingDate(d){var p=String(d||'').split('-');return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:String(d||'')}
+function bookingPhone(b){var phone=String(b.telefone||'').replace(/\D/g,'');if(phone.length<=11)phone='55'+phone;return phone}
 function bookingWhatsApp(b){
- var phone=String(b.telefone||'').replace(/\D/g,'');if(phone.length<=11)phone='55'+phone;
+ var phone=bookingPhone(b);
  var message='Olá, '+(b.nome||'')+'! Precisamos cancelar o horário reservado para '+formatBookingDate(b.data)+' às '+(b.horario||'')+'. Pedimos desculpas pelo transtorno. Podemos combinar outro horário? Diga quais dias e horários ficam melhores para você.';
  return 'https://wa.me/'+phone+'?text='+encodeURIComponent(message);
 }
@@ -161,7 +162,7 @@ function drawBookingHistory(rows){
   var cancelled=b.status==='cancelled';
   return '<article style="border:1px solid var(--line);border-radius:12px;padding:14px;margin:12px 0;background:#ffffff08">'+
    '<div class="row" style="justify-content:space-between;align-items:center;gap:8px"><strong>'+esc(b.nome)+'</strong><span class="hint">'+(cancelled?'Cancelado':'Agendado')+'</span></div>'+
-   '<p style="margin:7px 0">WhatsApp: <a href="https://wa.me/'+esc(String(b.telefone||'').replace(/\D/g,''))+'" target="_blank" rel="noopener">'+esc(b.telefone)+'</a></p>'+
+   '<p style="margin:7px 0">WhatsApp: <a href="https://wa.me/'+esc(bookingPhone(b))+'" target="_blank" rel="noopener">'+esc(b.telefone)+'</a></p>'+
    '<p style="margin:4px 0">Data: '+esc(formatBookingDate(b.data))+' às '+esc(b.horario)+'</p>'+
    '<p style="margin:4px 0">Estilo: '+esc(b.estilo||'Não informado')+(b.local?' · Local: '+esc(b.local):'')+'</p>'+
    (b.ideia?'<p class="hint" style="margin:4px 0">Ideia: '+esc(b.ideia)+'</p>':'')+
