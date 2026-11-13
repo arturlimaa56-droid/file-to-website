@@ -14,13 +14,83 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      panel_accounts: {
+        Row: {
+          password_hash: string
+          role: string
+          username: string
+        }
+        Insert: {
+          password_hash: string
+          role: string
+          username: string
+        }
+        Update: {
+          password_hash?: string
+          role?: string
+          username?: string
+        }
+        Relationships: []
+      }
+      panel_sessions: {
+        Row: {
+          expires_at: string
+          role: string
+          token: string
+        }
+        Insert: {
+          expires_at: string
+          role: string
+          token: string
+        }
+        Update: {
+          expires_at?: string
+          role?: string
+          token?: string
+        }
+        Relationships: []
+      }
+      site_state: {
+        Row: {
+          data: Json
+          id: number
+          updated_at: string
+        }
+        Insert: {
+          data: Json
+          id?: number
+          updated_at?: string
+        }
+        Update: {
+          data?: Json
+          id?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      panel_accounts_info: { Args: { p_token: string }; Returns: Json }
+      panel_login: { Args: { p_pass: string; p_user: string }; Returns: Json }
+      panel_role: { Args: { p_token: string }; Returns: string }
+      panel_save_accounts: {
+        Args: {
+          p_admin_pass: string
+          p_admin_user: string
+          p_tattoo_pass: string
+          p_tattoo_user: string
+          p_token: string
+        }
+        Returns: boolean
+      }
+      site_get_state: { Args: never; Returns: Json }
+      site_save_state: {
+        Args: { p_data: Json; p_token: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
