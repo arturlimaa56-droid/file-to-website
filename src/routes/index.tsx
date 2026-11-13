@@ -17,7 +17,7 @@ export const Route = createFileRoute("/")({
 function Index() {
   return (
     <iframe
-      src="/cenin.html"
+      src="/cenin.html?v=roles-20261113
       title="Cenin Studio · Tatuagem"
       className="fixed inset-0 h-full w-full border-0 bg-background"
     />
