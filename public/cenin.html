@@ -155,7 +155,7 @@ if(t==='painel'){$('panel-exit').addEventListener('click',function(){TOKEN=null;
 $('a-fotos').addEventListener('change',function(){
   var files=[].slice.call(this.files||[]);
   files.forEach(function(file){
-    if(!file.type.match(/^image\\//)){msg.textContent='Escolha arquivos de imagem.';return}
+    if(!file.type.match(/^image\//)){msg.textContent='Escolha arquivos de imagem.';return}
     if(file.size>12*1024*1024){msg.textContent='Cada foto deve ter até 12 MB.';return}
     if((S.galeria||[]).length>=8){msg.textContent='O limite é de 8 fotos. Remova uma antes de adicionar outra.';return}
     shrink(file,function(data,err){
