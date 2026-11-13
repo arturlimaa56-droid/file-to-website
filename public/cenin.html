@@ -71,6 +71,7 @@ estilos:function(){return '<h2>O que a gente faz</h2><div class="grid">'+S.estil
 agenda:function(){var today=new Date();today.setMinutes(today.getMinutes()-today.getTimezoneOffset());var min=today.toISOString().slice(0,10);
 return '<h2>Agendar</h2><div class="box"><p style="margin-top:0">Atendimento: '+esc(openDays())+'. Escolha o dia e o horário e o pedido chega pronto no WhatsApp do tatuador.</p>'+
 '<label for="f-nome">Seu nome</label><input id="f-nome" autocomplete="name">'+
+'<label for="f-cliente-wa">Seu WhatsApp com DDD</label><input id="f-cliente-wa" type="tel" inputmode="tel" autocomplete="tel" placeholder="(86) 99999-9999">'+
 '<label for="f-estilo">Estilo da tatuagem</label><select id="f-estilo">'+S.estilos.map(function(e){return '<option>'+esc(e.n)+'</option>'}).join('')+'<option>Ainda não sei</option></select>'+
 '<label for="f-local">Local do corpo</label><input id="f-local" placeholder="Ex.: antebraço, costela">'+
 '<label for="f-ideia">Sua ideia</label><textarea id="f-ideia" placeholder="Conte o que você quer tatuar e o tamanho aproximado"></textarea>'+
@@ -111,11 +112,12 @@ $('f-data').addEventListener('change',function(){sel='';var v=this.value;if(!v)r
 if(S.dias.indexOf(dow)<0){chips.innerHTML='<span class="hint">Não atendemos '+DIAS[dow].toLowerCase()+'. Dias: '+esc(openDays())+'.</span>';return}
 chips.innerHTML=S.horas.map(function(h){return busy(v,h)?'':'<button type="button" class="chip" data-h="'+esc(h)+'" aria-pressed="false">'+esc(h)+'</button>'}).join('')||'<span class="hint">Sem horários livres nesse dia.</span>'});
 chips.addEventListener('click',function(e){var b=e.target.closest('.chip');if(!b)return;sel=b.dataset.h;chips.querySelectorAll('.chip').forEach(function(c){c.setAttribute('aria-pressed',c===b)})});
-$('f-enviar').addEventListener('click',function(){var n=$('f-nome').value.trim(),d=$('f-data').value;
+$('f-enviar').addEventListener('click',function(){var n=$('f-nome').value.trim(),tel=$('f-cliente-wa').value.trim(),digits=tel.replace(/\D/g,''),d=$('f-data').value;
 if(!n){err.textContent='Digite seu nome.';$('f-nome').focus();return}
+if(digits.length<10||digits.length>13){err.textContent='Digite um WhatsApp válido com DDD.';$('f-cliente-wa').focus();return}
 if(!d||!sel){err.textContent='Escolha o dia e o horário.';return}
 err.textContent='';var p=d.split('-');
-var m='Oi! Quero agendar uma tatuagem.\n\nNome: '+n+'\nEstilo: '+$('f-estilo').value+'\nLocal do corpo: '+($('f-local').value.trim()||'a definir')+'\nIdeia: '+($('f-ideia').value.trim()||'a combinar')+'\nDia: '+p[2]+'/'+p[1]+'/'+p[0]+' às '+sel;
+var m='Oi! Quero agendar uma tatuagem.\n\nNome: '+n+'\nWhatsApp do cliente: '+tel+'\nEstilo: '+$('f-estilo').value+'\nLocal do corpo: '+($('f-local').value.trim()||'a definir')+'\nIdeia: '+($('f-ideia').value.trim()||'a combinar')+'\nDia: '+p[2]+'/'+p[1]+'/'+p[0]+' às '+sel;
 window.open(wa(m),'_blank','noopener')})}
 if(t==='login'){$('login-enter').addEventListener('click',function(){var u=$('login-user').value.trim().toLowerCase(),p=$('login-pass').value;if(u===PANEL_USER&&p===PANEL_PASS){isOwner=true;show('painel')}else{$('login-err').textContent='Usuário ou senha incorretos.'}});$('login-pass').addEventListener('keydown',function(e){if(e.key==='Enter')$('login-enter').click()})}
 if(t==='painel'){var est=$('a-est'),msg=$('a-msg');
