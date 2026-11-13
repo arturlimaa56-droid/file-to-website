@@ -231,7 +231,8 @@ function initGalleryLightbox(){
  overlay.addEventListener('touchend',function(e){if(lastX===0||!e.changedTouches||!e.changedTouches.length)return;var dx=e.changedTouches[0].clientX-lastX;lastX=0;if(Math.abs(dx)>45)move(dx>0?-1:1)},{passive:true});
 }
 initGalleryLightbox();
-\nshow((location.hash||'#inicio').slice(1),true);var lastSync='';function sync(){rpc('site_get_state').then(function(d){if(!d)return;var k=JSON.stringify(d);if(k===lastSync)return;lastSync=k;Object.assign(S,d);S.galeria=S.galeria||[];S.diasFechados=S.diasFechados||[];if(cur!=='painel'&&cur!=='agenda'&&cur!=='login')show(cur,true)}).catch(function(){})}sync();setInterval(sync,20000);
+
+show((location.hash||'#inicio').slice(1),true);var lastSync='';function sync(){rpc('site_get_state').then(function(d){if(!d)return;var k=JSON.stringify(d);if(k===lastSync)return;lastSync=k;Object.assign(S,d);S.galeria=S.galeria||[];S.diasFechados=S.diasFechados||[];if(cur!=='painel'&&cur!=='agenda'&&cur!=='login')show(cur,true)}).catch(function(){})}sync();setInterval(sync,20000);
 if(window.claude&&claude.use){claude.use('artifact').then(function(a){artifact=a}).catch(function(){})}
 })();
 </script></body></html>
