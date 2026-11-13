@@ -60,6 +60,7 @@ textarea{min-height:90px;resize:vertical}
 var S=JSON.parse(document.getElementById('state').textContent);S.galeria=S.galeria||[];S.localizacao=S.localizacao||'';S.diasFechados=S.diasFechados||[];
 var app=document.getElementById('app'),tabs=document.getElementById('tabs'),logo=document.getElementById('logo').src;
 var isOwner=false,artifact=null,cur='inicio';
+var PANEL_USER='artur lima',PANEL_PASS='1389';
 var DIAS=['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
 function esc(t){var d=document.createElement('div');d.textContent=t==null?'':t;return d.innerHTML}
 function wa(msg){return 'https://wa.me/'+S.whatsapp+(msg?'?text='+encodeURIComponent(msg):'')}
@@ -77,6 +78,7 @@ return '<h2>Agendar</h2><div class="box"><p style="margin-top:0">Atendimento: '+
 '<label id="l-h">Horário</label><div class="chips" id="f-horas" role="group" aria-labelledby="l-h"><span class="hint">Escolha um dia primeiro.</span></div>'+
 '<p class="err" id="f-err" role="alert"></p><button class="btn" id="f-enviar" type="button">Enviar pelo WhatsApp</button></div>'},
 sobre:function(){return '<h2>Sobre mim</h2><div class="box"><p style="margin-top:0">'+esc(S.sobre).replace(/\n/g,'<br>')+'</p></div><h2 style="margin-top:40px">Depois da tatuagem</h2><div class="box"><ul class="care">'+S.cuidados.map(function(c){return '<li>'+esc(c)+'</li>'}).join('')+'</ul></div><p style="margin-top:28px;text-align:center"><a class="btn alt" href="https://www.instagram.com/'+esc(S.insta)+'" target="_blank" rel="noopener">Ver trabalhos no Instagram</a></p>'},
+login:function(){return '<h2>Acesso do tatuador</h2><div class="box"><p>Entre para administrar o estúdio, a agenda e as fotos.</p><label for="login-user">Usuário</label><input id="login-user" autocomplete="username" placeholder="Usuário"><label for="login-pass">Senha</label><input id="login-pass" type="password" autocomplete="current-password" placeholder="Senha"><p class="err" id="login-err" role="alert"></p><button class="btn" id="login-enter" type="button">Entrar no painel</button></div>'},
 painel:function(){return '<h2>Painel</h2><div class="box">'+
 '<label for="a-nome">Nome do estúdio</label><input id="a-nome" value="'+esc(S.nome)+'">'+
 '<label for="a-frase">Frase da página inicial</label><input id="a-frase" value="'+esc(S.frase)+'">'+
@@ -94,7 +96,7 @@ painel:function(){return '<h2>Painel</h2><div class="box">'+
 '<p class="err" id="a-msg" role="status"></p><button class="btn" id="a-save" type="button">Salvar e publicar</button></div>'}
 };
 function estRow(e){return '<div class="est"><input aria-label="Nome do estilo" value="'+esc(e.n)+'"><input aria-label="Descrição" value="'+esc(e.d)+'"><button type="button" class="btn sm a-del" aria-label="Remover estilo">✕</button></div>'}
-function renderTabs(){var t=[['inicio','✦','Início'],['estilos','☠','Estilos'],['agenda','✎','Agenda'],['sobre','♥','Sobre']];if(isOwner)t.push(['painel','⚙','Painel']);
+function renderTabs(){var t=[['inicio','✦','Início'],['estilos','☠','Estilos'],['agenda','✎','Agenda'],['sobre','♥','Sobre']];if(isOwner)t.push(['painel','⚙','Painel']);else t.push(['login','♙','Entrar']);
 tabs.innerHTML=t.map(function(x){return '<button type="button" data-t="'+x[0]+'"'+(x[0]===cur?' aria-current="page"':'')+'><span aria-hidden="true">'+x[1]+'</span>'+x[2]+'</button>'}).join('')}
 function show(t,skip){if(!V[t]||(t==='painel'&&!isOwner))t='inicio';cur=t;app.innerHTML=V[t]();app.classList.remove('in');void app.offsetWidth;app.classList.add('in');renderTabs();window.scrollTo(0,0);if(!skip&&location.hash!=='#'+t)history.replaceState(null,'','#'+t);bind(t)}
 tabs.addEventListener('click',function(e){var b=e.target.closest('button[data-t]');if(b)show(b.dataset.t)});
@@ -115,10 +117,11 @@ if(!d||!sel){err.textContent='Escolha o dia e o horário.';return}
 err.textContent='';var p=d.split('-');
 var m='Oi! Quero agendar uma tatuagem.\n\nNome: '+n+'\nEstilo: '+$('f-estilo').value+'\nLocal do corpo: '+($('f-local').value.trim()||'a definir')+'\nIdeia: '+($('f-ideia').value.trim()||'a combinar')+'\nDia: '+p[2]+'/'+p[1]+'/'+p[0]+' às '+sel;
 window.open(wa(m),'_blank','noopener')})}
+if(t==='login'){$('login-enter').addEventListener('click',function(){var u=$('login-user').value.trim().toLowerCase(),p=$('login-pass').value;if(u===PANEL_USER&&p===PANEL_PASS){isOwner=true;show('painel')}else{$('login-err').textContent='Usuário ou senha incorretos.'}});$('login-pass').addEventListener('keydown',function(e){if(e.key==='Enter')$('login-enter').click()})}
 if(t==='painel'){var est=$('a-est'),msg=$('a-msg');
-$('a-fotos').addEventListener('change',function(){[].slice.call(this.files||[]).forEach(function(file){if(!file.type.match(/^image\\//))return;if(file.size>4*1024*1024){msg.textContent='Cada foto deve ter até 4 MB.';return}var rd=new FileReader();rd.onload=function(){S.galeria.push(rd.result);var box=document.createElement('div');box.innerHTML='<img src="'+rd.result+'" alt="Novo trabalho"><button class="btn sm" type="button">Remover</button>';box.querySelector('button').onclick=function(){S.galeria=S.galeria.filter(function(x){return x!==rd.result});box.remove()};$('a-galeria').appendChild(box)};rd.readAsDataURL(file)})});
+$('a-fotos').addEventListener('change',function(){[].slice.call(this.files||[]).forEach(function(file){if(!file.type.match(/^image\//))return;if(file.size>4*1024*1024){msg.textContent='Cada foto deve ter até 4 MB.';return}var rd=new FileReader();rd.onload=function(){S.galeria.push(rd.result);var box=document.createElement('div');box.innerHTML='<img src="'+rd.result+'" alt="Novo trabalho"><button class="btn sm" type="button">Remover</button>';box.querySelector('button').onclick=function(){S.galeria=S.galeria.filter(function(x){return x!==rd.result});box.remove()};$('a-galeria').appendChild(box)};rd.readAsDataURL(file)})});
 $('a-galeria').addEventListener('click',function(e){var b=e.target.closest('.a-foto-del');if(b){S.galeria.splice(+b.dataset.i,1);b.parentNode.remove()}});
-$('a-fechar').addEventListener('click',function(){var d=$('a-fecha-data').value,m=$('a-fecha-motivo').value;if(!d){msg.textContent='Escolha uma data para bloquear.';return}if(m==='Outro motivo')m=$('a-fecha-outro').value.trim()||'Indisponível';if(S.diasFechados.some(function(x){return x.data===d})){msg.textContent='Esse dia já está bloqueado.';return}S.diasFechados.push({data:d,motivo:m});$('a-dias-fechados').insertAdjacentHTML('beforeend','<p>'+esc(d)+' — '+esc(m)+'</p>');msg.textContent='Dia bloqueado. Clique em Salvar e publicar.'});
+$('a-fechar').addEventListener('click',function(){var d=$('a-fecha-data').value,m=$('a-fecha-motivo').value;if(!d){msg.textContent='Escolha uma data para bloquear.';return}if(m==='Outro motivo')m=$('a-fecha-outro').value.trim()||'Indisponível';if(S.diasFechados.some(function(x){return x.data===d})){msg.textContent='Esse dia já está bloqueado.';return}S.diasFechados.push({data:d,motivo:m});var idx=S.diasFechados.length-1;$('a-dias-fechados').insertAdjacentHTML('beforeend','<p>'+esc(d)+' — '+esc(m)+' <button type="button" class="btn sm a-abre" data-i="'+idx+'">Reabrir</button></p>');msg.textContent='Dia bloqueado. Clique em Salvar e publicar.'});
 $('a-dias-fechados').addEventListener('click',function(e){var b=e.target.closest('.a-abre');if(b){S.diasFechados.splice(+b.dataset.i,1);b.parentNode.remove();msg.textContent='Dia reaberto. Clique em Salvar e publicar.'}});
 $('a-add').addEventListener('click',function(){est.insertAdjacentHTML('beforeend',estRow({n:'',d:''}))});
 est.addEventListener('click',function(e){var b=e.target.closest('.a-del');if(b)b.parentNode.remove()});
@@ -138,7 +141,6 @@ var c=document.documentElement.cloneNode(true);c.querySelector('#app').innerHTML
 c.querySelector('#state').textContent=JSON.stringify(ns).replace(/</g,'\\u003c');
 artifact.publish('<!DOCTYPE html>\n'+c.outerHTML).then(function(){msg.textContent='Publicado.'}).catch(function(er){msg.textContent=(er&&er.code==='conflict')?'Outra alteração foi publicada. A página vai recarregar.':'Não deu para publicar. Tente de novo.'})})}}
 show((location.hash||'#inicio').slice(1),true);
-if(window.claude&&claude.use){Promise.all([claude.use('user'),claude.use('artifact')]).then(function(r){var u=r[0];artifact=r[1];
-if(u&&artifact&&(u.isOwner()||u.canEdit())){isOwner=true;renderTabs();if(location.hash==='#painel')show('painel',true)}}).catch(function(){})}
+if(window.claude&&claude.use){claude.use('artifact').then(function(a){artifact=a}).catch(function(){})}
 })();
 </script></body></html>
