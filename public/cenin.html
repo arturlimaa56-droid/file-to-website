@@ -163,7 +163,7 @@ function drawBookingHistory(rows){
  function card(b,isCancelled){
   return '<article style="border:1px solid var(--line);border-radius:12px;padding:14px;margin:12px 0;background:#ffffff08">'+
    '<div class="row" style="justify-content:space-between;align-items:center;gap:8px"><strong>'+esc(b.nome)+'</strong><span class="hint">'+(isCancelled?'Cancelado':'Agendado')+'</span></div>'+
-   '<p style="margin:7px 0">WhatsApp: <a href="whatsapp://send?phone='+esc(bookingPhone(b))+'">'+esc(b.telefone)+'</a></p>'+
+   '<p style="margin:7px 0">WhatsApp: '+(isCancelled?esc(b.telefone):'<a href="whatsapp://send?phone='+esc(bookingPhone(b))+'">'+esc(b.telefone)+'</a>')+'</p>'+
    '<p style="margin:4px 0">Data: '+esc(formatBookingDate(b.data))+' às '+esc(b.horario)+'</p>'+
    '<p style="margin:4px 0">Estilo: '+esc(b.estilo||'Não informado')+(b.local?' · Local: '+esc(b.local):'')+'</p>'+
    (b.ideia?'<p class="hint" style="margin:4px 0">Ideia: '+esc(b.ideia)+'</p>':'')+
