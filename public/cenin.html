@@ -155,11 +155,19 @@ function bookingWhatsApp(b){
  var message='Olá, '+(b.nome||'')+'! Precisamos cancelar o horário reservado para '+formatBookingDate(b.data)+' às '+(b.horario||'')+'. Pedimos desculpas pelo transtorno. Podemos combinar outro horário? Diga quais dias e horários ficam melhores para você.';
  return 'whatsapp://send?phone='+phone+'&text='+encodeURIComponent(message);
 }
+function isTodayLocal(value){
+ if(!value)return false;
+ var d=new Date(value);
+ if(isNaN(d.getTime()))return false;
+ var now=new Date();
+ return d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth()&&d.getDate()===now.getDate();
+}
 function drawBookingHistory(rows){
  var box=document.getElementById('booking-history');if(!box)return;
  rows=Array.isArray(rows)?rows:[];
  var scheduled=rows.filter(function(b){var s=String(b.status||'scheduled').toLowerCase();return s!=='cancelled'&&s!=='canceled'});
- var cancelled=rows.filter(function(b){var s=String(b.status||'').toLowerCase();return s==='cancelled'||s==='canceled'});
+ // Cancelamentos aparecem somente no dia em que foram feitos. O registro continua salvo no banco.
+ var cancelled=rows.filter(function(b){var s=String(b.status||'').toLowerCase();return (s==='cancelled'||s==='canceled')&&isTodayLocal(b.cancelled_at||b.created_at)});
  function card(b,isCancelled){
   return '<article style="border:1px solid var(--line);border-radius:12px;padding:14px;margin:12px 0;background:#ffffff08">'+
    '<div class="row" style="justify-content:space-between;align-items:center;gap:8px"><strong>'+esc(b.nome)+'</strong><span class="hint">'+(isCancelled?'Cancelado':'Agendado')+'</span></div>'+
