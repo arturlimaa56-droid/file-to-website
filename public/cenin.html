@@ -106,7 +106,7 @@ var API='https://c--ac563e4c-6af0-40fd-aeab-52837b38ac8d-prod.lovable.cloud/rest
 }
 var DIAS=['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
 function esc(t){var d=document.createElement('div');d.textContent=t==null?'':t;return d.innerHTML}
-function wa(msg){return 'https://wa.me/'+S.whatsapp+(msg?'?text='+encodeURIComponent(msg):'')}
+function wa(msg){return 'https://api.whatsapp.com/send?phone='+String(S.whatsapp||'').replace(/\D/g,'')+(msg?'&text='+encodeURIComponent(msg):'')}
 function openDays(){return S.dias.map(function(d){return DIAS[d]}).join(', ')}
 var V={
 inicio:function(){return '<div class="hero"><img src="'+logo+'" alt="Logo '+esc(S.nome)+'"><h1>'+esc(S.nome)+'</h1><p>'+esc(S.frase)+'</p><div class="row"><a class="btn" href="#agenda">Agendar horário</a><a class="btn alt" href="'+wa('Oi! Vim pelo site e quero tirar uma dúvida.')+'" target="_blank" rel="noopener">Chamar no WhatsApp</a></div></div><section class="box"><h2>Sobre mim</h2><p>'+esc(S.sobre).replace(/\\n/g,'<br>')+'</p></section>'+galleryHTML()+(S.localizacao?'<section class="box"><h2>Como chegar</h2><a class="btn alt" target="_blank" rel="noopener" href="'+esc(S.localizacao)+'">Abrir localização no mapa</a></section>':'')+'<p style="text-align:center"><a href="https://instagram.com/'+esc(S.insta)+'" target="_blank" rel="noopener">Instagram @'+esc(S.insta)+'</a></p>'},
@@ -153,7 +153,7 @@ function bookingPhone(b){var phone=String(b.telefone||'').replace(/\D/g,'');if(p
 function bookingWhatsApp(b){
  var phone=bookingPhone(b);
  var message='Olá, '+(b.nome||'')+'! Precisamos cancelar o horário reservado para '+formatBookingDate(b.data)+' às '+(b.horario||'')+'. Pedimos desculpas pelo transtorno. Podemos combinar outro horário? Diga quais dias e horários ficam melhores para você.';
- return 'https://wa.me/'+phone+'?text='+encodeURIComponent(message);
+ return 'https://api.whatsapp.com/send?phone='+phone+'&text='+encodeURIComponent(message);
 }
 function drawBookingHistory(rows){
  var box=document.getElementById('booking-history');if(!box)return;
